@@ -127,9 +127,13 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 		return $returnArray;
 	}
 	
-//	public function getHome($uid) {
-//		return GO::config()->file_storage_path.'users/'.$uid;
-//	}
+	public function getHome($uid) {
+		
+		$home = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'owncloud/'.$uid);
+		$home->create();	
+		
+		return $home->path();
+	}
 	
 	public function getDisplayName($uid) {
 		return $this->_getUser($uid)->name;
