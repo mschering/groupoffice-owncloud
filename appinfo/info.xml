@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<info>
+	<id>groupoffice</id>
+	<name>Group-Office integration</name>
+	<description>Use Group-Office users, groups and files. Group-Office must run on the same server.</description>
+	<licence>AGPL</licence>
+	<author>Intermesh BV</author>
+	<require>4.93</require>
+	<shipped>false</shipped>
+	<types>
+		<authentication/>
+	</types>
+</info>
