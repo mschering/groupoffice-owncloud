@@ -64,7 +64,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 		} else {
 			
 			//workaround bug in ownCloud			
-			$cache = OC_User::getHome($uid).'cache';			
+			$cache = OC_User::getHome($uid).'/cache';			
 			if(!is_dir($cache))
 				mkdir($cache,0755,true);
 			
