@@ -129,7 +129,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 	
 	public function getHome($uid) {
 		
-		$home = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'owncloud/'.$uid);
+		$home = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
 		$home->create();	
 		
 		return $home->path();
