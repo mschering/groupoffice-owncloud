@@ -3,48 +3,42 @@
 class OC_USER_GROUPOFFICE extends OC_User_Backend {
 
 	private $_user=array();
-	
-	private $_groupoffice_mount;
-	
+
 	public function __construct() {
-		
-		
+
+
 		$groupoffice_root = rtrim(\OC_Config::getValue("groupoffice_root", "/usr/share/groupoffice"),'/');
-		
+
 		$groupoffice_config = \OC_Config::getValue("groupoffice_config");
 		if(!empty($groupoffice_config))
 			define('GO_CONFIG_FILE', $groupoffice_config);
-		
-		$this->_groupoffice_mount = '/'.trim(OC_Config::getValue("groupoffice_mount", "ownCloud"),' /');
-		
+
 		require_once($groupoffice_root.'/GO.php');
-		
+
 		//create group-office mount.json file
 		$datadir = \OC_Config::getValue("datadirectory", \OC::$SERVERROOT . "/data");
 		$mountFile = $datadir.'/mount.json';
-		
+
 		if(!file_exists($mountFile)){
 			$mountConfig =  array(
-					'user'=>array(
-							'all'=>array(
-									'/$user/files/Group-Office'=>
-									array(
-											'class'=>'OC_Filestorage_Local',
-											'options'=>array(
-													'datadir'=>GO::config()->file_storage_path.'users/$user'.$this->_groupoffice_mount
-													)
-											),
+				'user'=>array(
+					'all'=>array(
+						'/$user/files/Groupoffice/Privat'=>
+							array(
+								'class' => '\OC\Files\Storage\Groupoffice',
+								'options' => array(
+									'datadir' => GO::config()->file_storage_path.'users/$user/',
+									'groupofficepath' => 'users/$user/'
+								)
+							),
 
-							)
 					)
+				)
 			);
 
 			file_put_contents($mountFile, json_encode($mountConfig));
 		}
 	}
-	
-	
-
 	public function deleteUser($uid) {
 		// Can't delete user
 		return false;
@@ -62,63 +56,41 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 		if (!$this->_user[$uid]) {
 			return false;
 		} else {
-			
+
 			//workaround bug in ownCloud			
-			$cache = OC_User::getHome($uid).'/cache';			
+			$cache = OC_User::getHome($uid).'/cache';
 			if(!is_dir($cache))
 				mkdir($cache,0755,true);
-			
-			//make sure ownCloud folder exists in Group-Office
-			$folder = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'users/'.$uid.$this->_groupoffice_mount);
-			$folder->create();
 
-			
 			return $uid;
 		}
 	}
 
-	/**
-	 * 
-	 * @param string $username
-	 * @return GO_Base_Model_User
-	 */
 	private function _getUser($username){
 		if(!isset($this->_user[$username])){
-				$this->_user[$username] = GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
+			$this->_user[$username] = GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
 		}
-		
-			
+
+
 		return $this->_user[$username];
 	}
-	/*
-	 * we don´t know if a user exists without the password. so we have to return true all the time
-	 */
 
 	public function userExists($uid) {
-
-		
 		return $this->_getUser($uid) != false;
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function hasUserListings() {
 		return true;
 	}
 
-	/*
-	 * we don´t know the users so all we can do it return an empty array here
-	 */
-
 	public function getUsers($search = '', $limit = 10, $offset = 0) {
 		$returnArray = array();
-		
+
 		$fp = GO_Base_Db_FindParams::newInstance()
-						->limit($limit)
-						->start($offset)
-						->searchQuery($search);
-		
+			->limit($limit)
+			->start($offset)
+			->searchQuery($search);
+
 		$stmt = GO_Base_Model_User::model()->find($fp);
 		foreach($stmt as $user){
 			$returnArray[]=$user->username;
@@ -126,15 +98,15 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 
 		return $returnArray;
 	}
-	
+
 	public function getHome($uid) {
-		
+
 		$home = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
-		$home->create();	
-		
+		$home->create();
+
 		return $home->path();
 	}
-	
+
 	public function getDisplayName($uid) {
 		return $this->_getUser($uid)->name;
 	}
