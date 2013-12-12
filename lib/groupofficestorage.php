@@ -251,7 +251,23 @@ class Groupoffice extends \OC\Files\Storage\Local {
 	*
 	*/
 	public function isReadable($path) {
-		return true;
+		$fullpath = $this->groupofficepath.'/'.$path;
+
+		if ($this->is_file($path))
+			$fullpath = dirname($fullpath);
+
+		$folder = \GO_Files_Model_Folder::model()->findByPath($fullpath);
+
+		if ($folder != '') {
+			if ($folder->checkPermissionLevel(\GO_Base_Model_Acl::READ_PERMISSION))
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		return false;
 	}
 	public function isUpdatable($path) {
 		$fullpath = $this->groupofficepath.'/'.$path;
