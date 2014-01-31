@@ -27,8 +27,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 							array(
 								'class' => '\OC\Files\Storage\Groupoffice',
 								'options' => array(
-									'datadir' => GO::config()->file_storage_path.'users/$user/',
-									'groupofficepath' => 'users/$user/'
+									'user' => '$user'
 								)
 							),
 
