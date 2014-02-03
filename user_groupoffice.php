@@ -25,7 +25,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend
             $mountConfig = array(
                 'user' => array(
                     'all' => array(
-                        '/$user/files/Groupoffice/ownFolder' =>
+                        '/$user/files/Groupoffice' =>
                             array(
                                 'class' => '\OC\Files\Storage\Groupoffice',
                                 'options' => array(
