@@ -2,7 +2,7 @@
 <info>
 	<id>groupoffice</id>
 	<name>Group-Office integration</name>
-	<description>Use Group-Office users, groups and files. Group-Office must run on the same server. Version 1.2 now shows ownFolder and all Shared Folders, a user has access to in Group-Office.</description>
+	<description>Use Group-Office users, groups and files. Group-Office must run on the same server. Version 1.2.1 now shows ownFolder and all Shared Folders, a user has access to in Group-Office.</description>
 	<licence>AGPL</licence>
 	<author>Intermesh BV, ALLMENDA Social Business eG, web wack creations</author>
 	<require>4.93</require>
