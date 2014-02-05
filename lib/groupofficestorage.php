@@ -14,6 +14,7 @@ class Groupoffice extends \OC\Files\Storage\Common
         if (isset($arguments['user'])) {
             $this->id = 'groupoffice::' . $arguments['user'] . '/';
             $this->groupoffice_data = \GO::config()->file_storage_path;
+            \GO::session()->setCurrentUser(\GO_Base_Model_User::model()->findSingleByAttribute('username', $arguments['user']));
 
             $this->groupoffice_shares['ownFolder'] = 'users/' . $arguments['user'];
             $shares = \GO_Files_Model_Folder::model()->getTopLevelShares(\GO_Base_Db_FindParams::newInstance()->limit(100));
@@ -274,11 +275,11 @@ class Groupoffice extends \OC\Files\Storage\Common
     public function free_space($path)
     {
         if ($path == '' || $path == '/') {
-            return \OC\Files\FREE_SPACE_UNKNOWN;
+            return \OC\Files\SPACE_UNKNOWN;
         } else {
             $space = @disk_free_space($this->groupoffice_data . $this->get_real_path($path));
             if ($space === false) {
-                return \OC\Files\FREE_SPACE_UNKNOWN;
+                return \OC\Files\SPACE_UNKNOWN;
             }
             return $space;
         }
