@@ -313,15 +313,7 @@ class Groupoffice extends \OC\Files\Storage\Common
     {
         \OCP\Util::writeLog('groupoffice', 'rmdir: ' . $path, \OCP\Util::DEBUG);
         if ($this->isDeletable($path)) {
-            $fullpath = $this->get_real_path($path);
-
-            $folder = \GO_Files_Model_Folder::model()->findByPath($fullpath);
-
-            if ($folder != '') {
-                $folder->delete();
-                \OCP\Util::writeLog('groupoffice', 'rmdir: true', \OCP\Util::DEBUG);
-                return true;
-            }
+            return $this->delTree($path);
         } else
             return false;
     }
