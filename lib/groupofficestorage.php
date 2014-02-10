@@ -343,6 +343,20 @@ class Groupoffice extends \OC\Files\Storage\Common
         }
     }
 
+    public function rename($path1, $path2)
+    {
+        if (!$this->isUpdatable($path1)) {
+            return false;
+        }
+        if (!$this->file_exists($path1)) {
+            return false;
+        }
+
+        if ($return = rename($this->groupoffice_data . $this->get_real_path($path1), $this->groupoffice_data . $this->get_real_path($path2))) {
+        }
+        return $return;
+    }
+
     public function copy($path1, $path2)
     {
         if ($this->isCreatable(dirname($path2))) {
