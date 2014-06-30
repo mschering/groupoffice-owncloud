@@ -32,6 +32,18 @@ class Groupoffice extends \OC\Files\Storage\Common
         return $this->id;
     }
 
+    private function is_root_shared_folder($path) {
+        $tmp = explode("/", $path);
+        $basefolder = $tmp[0];
+        unset($tmp[0]);
+        $realfolder = implode("/", $tmp);
+
+        if (array_key_exists($basefolder,$this->groupoffice_shares) && $realfolder == '')
+            return true;
+        else
+            return false;
+    }
+
     public function isSharable($path)
     {
         return false;
@@ -194,6 +206,11 @@ class Groupoffice extends \OC\Files\Storage\Common
         if ($path == '' || $path == '/') {
             return false;
         } else {
+            if ($this->is_root_shared_folder($path)) {
+                \OCP\Util::writeLog('groupoffice', 'isupdatable: is root shared, block update', \OCP\Util::DEBUG);
+                return false;
+            }
+
             $fullpath = $this->get_real_path($path);
 
             if ($this->is_file($path))
@@ -244,6 +261,11 @@ class Groupoffice extends \OC\Files\Storage\Common
         if ($path == '' || $path == '/') {
             return false;
         } else {
+            if ($this->is_root_shared_folder($path)) {
+                \OCP\Util::writeLog('groupoffice', 'isdeletable: is root shared, block delete', \OCP\Util::DEBUG);
+                return false;
+            }
+
             $fullpath = $this->get_real_path($path);
 
             if ($this->is_file($path))
