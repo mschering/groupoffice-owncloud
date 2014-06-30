@@ -27,6 +27,13 @@ class Groupoffice extends \OC\Files\Storage\Common
         }
     }
 
+    public static function setup($options) {
+        if (\OCP\User::isLoggedIn()) {
+            \OC\Files\Filesystem::mount('\OC\Files\Storage\Groupoffice', array('user' => $options['user']),
+                $options['user_dir'] . '/Groupoffice/');
+        }
+    }
+
     public function getId()
     {
         return $this->id;
