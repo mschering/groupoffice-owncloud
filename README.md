@@ -1,4 +1,4 @@
-# groupoffice-owncloud
+# groupoffice <-> owncloud connector
 
 ownCloud plugin to connect with Group-Office
 
@@ -35,8 +35,16 @@ Tested with Group-Office 5.0.75 and ownCloud 7.0.1
 
     'groupoffice_config'=>'/path/to/groupoffice/config.php'
 
-Now you can install the Group-Office app in the app manager of ownCloud.
+**Now you can install the Group-Office app in the app manager of ownCloud.**
 Enjoy!
+
+### Keep in mind
+
+* the user- and accessmanagement stays in groupoffice
+* no users are created within owncloud, only access is granted
+* sharing folders in owncloud to groupmembers of groupoffice does not work. This only works in groupoffice and the folders are then accessible in owncloud.
+
+---
 
 Intermesh Group-Office Team   &   ALLMENDA Informatik
 http://www.group-office.com       http://ALLMENDA.com/informatik
