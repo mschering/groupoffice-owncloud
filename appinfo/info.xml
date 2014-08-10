@@ -2,12 +2,18 @@
 <info>
 	<id>groupoffice</id>
 	<name>Group-Office integration</name>
-	<description>Use Group-Office users, groups and files. Group-Office must run on the same server.</description>
+	<description>Use Group-Office users, groups and files. Group-Office must run on the same server. Version 1.4.0 now shows ownFolder and all Shared Folders, a user has access to in Group-Office.</description>
 	<licence>AGPL</licence>
-	<author>Intermesh BV</author>
-	<require>4.93</require>
+	<author>Intermesh BV, ALLMENDA Social Business eG, web wack creations</author>
+	<require>6.0.4</require>
+    <version>1.4.0</version>
 	<shipped>false</shipped>
 	<types>
+        <filesystem/>
 		<authentication/>
 	</types>
+    <documentation>
+        <user>http://ALLMENDA.com/owncloud</user>
+        <admin>https://github.com/horfic/groupoffice-owncloud</admin>
+    </documentation>
 </info>
