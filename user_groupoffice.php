@@ -34,18 +34,17 @@ class User extends \OC_User_Backend {
 		
 		if(!file_exists($mountFile)){
 			$mountConfig =  array(
-					'user'=>array(
-							'all'=>array(
-									'/$user/files/Group-Office'=>
-									array(
-											'class'=>'OC_Filestorage_Local',
-											'options'=>array(
-													'datadir'=>\GO::config()->file_storage_path.'users/$user'.$this->_groupoffice_mount
-													)
-											),
-
-							)
+				'user'=>array(
+					'all'=>array(
+						'/$user/files/Group-Office'=>array(
+							'class'=>"\\OC\\Files\\Storage\\Local",
+							'options'=>array(
+								'datadir'=>\GO::config()->file_storage_path.'users/$user/'.$this->_groupoffice_mount
+							),
+							'priority'=>150
+						)
 					)
+				)
 			);
 
 			file_put_contents($mountFile, json_encode($mountConfig));

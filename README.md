@@ -1,5 +1,4 @@
-groupoffice-owncloud
-====================
+# groupoffice-owncloud
 
 ownCloud plugin to connect with Group-Office
 
@@ -18,8 +17,17 @@ If you need to specify a Group-Office config.php location you can add:
 'groupoffice_config'=>'/path/to/groupoffice/config.php'
 
 Now you can install the Group-Office app in the app manager of ownCloud.
+after this activate to "External Storage Support" App as well
+
 Enjoy!
 
 Intermesh Group-Office Team
 
 http://www.group-office.com
+
+## Troubleshooting
+
+If the Group-Office folder is not displayed in ownCloud remove the mount.json file
+it will recreate after the first login
+
+
