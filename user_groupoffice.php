@@ -1,13 +1,22 @@
 <?php
+/**
+ * Copyright (c) 2014 Intermesh BV
+ *
+ * This file is licensed under the Affero General Public License version 3 or
+ * later
+ *
+ * If you have questions write an e-mail to info@intermesh.nl
+ */
+namespace OCA\groupoffice;
 
-class OC_USER_GROUPOFFICE extends OC_User_Backend {
+class User extends \OC_User_Backend {
 
 	private $_user=array();
-	
+		
 	private $_groupoffice_mount;
 	
+
 	public function __construct() {
-		
 		
 		$groupoffice_root = rtrim(\OC_Config::getValue("groupoffice_root", "/usr/share/groupoffice"),'/');
 		
@@ -15,7 +24,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 		if(!empty($groupoffice_config))
 			define('GO_CONFIG_FILE', $groupoffice_config);
 		
-		$this->_groupoffice_mount = '/'.trim(OC_Config::getValue("groupoffice_mount", "ownCloud"),' /');
+		$this->_groupoffice_mount = '/'.trim(\OC_Config::getValue("groupoffice_mount", "ownCloud"),' /');
 		
 		require_once($groupoffice_root.'/GO.php');
 		
@@ -31,7 +40,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 									array(
 											'class'=>'OC_Filestorage_Local',
 											'options'=>array(
-													'datadir'=>GO::config()->file_storage_path.'users/$user'.$this->_groupoffice_mount
+													'datadir'=>\GO::config()->file_storage_path.'users/$user'.$this->_groupoffice_mount
 													)
 											),
 
@@ -57,19 +66,19 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 
 	public function checkPassword($uid, $password) {
 
-		$this->_user[$uid] = GO::session()->login($uid, $password, false);
+		$this->_user[$uid] = \GO::session()->login($uid, $password, false);
 
 		if (!$this->_user[$uid]) {
 			return false;
 		} else {
 			
 			//workaround bug in ownCloud			
-			$cache = OC_User::getHome($uid).'/cache';			
+			$cache = \OC_User::getHome($uid).'/cache';			
 			if(!is_dir($cache))
 				mkdir($cache,0755,true);
 			
 			//make sure ownCloud folder exists in Group-Office
-			$folder = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'users/'.$uid.$this->_groupoffice_mount);
+			$folder = new \GO_Base_Fs_Folder(\GO::config()->file_storage_path.'users/'.$uid.$this->_groupoffice_mount);
 			$folder->create();
 
 			
@@ -84,7 +93,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 	 */
 	private function _getUser($username){
 		if(!isset($this->_user[$username])){
-				$this->_user[$username] = GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
+				$this->_user[$username] = \GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
 		}
 		
 			
@@ -114,12 +123,12 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 	public function getUsers($search = '', $limit = 10, $offset = 0) {
 		$returnArray = array();
 		
-		$fp = GO_Base_Db_FindParams::newInstance()
+		$fp = \GO_Base_Db_FindParams::newInstance()
 						->limit($limit)
 						->start($offset)
 						->searchQuery($search);
 		
-		$stmt = GO_Base_Model_User::model()->find($fp);
+		$stmt = \GO_Base_Model_User::model()->find($fp);
 		foreach($stmt as $user){
 			$returnArray[]=$user->username;
 		}
@@ -129,7 +138,7 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend {
 	
 	public function getHome($uid) {
 		
-		$home = new GO_Base_Fs_Folder(GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
+		$home = new \GO_Base_Fs_Folder(\GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
 		$home->create();	
 		
 		return $home->path();
