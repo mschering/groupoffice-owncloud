@@ -77,7 +77,7 @@ class User extends \OC_User_Backend {
 				mkdir($cache,0755,true);
 			
 			//make sure ownCloud folder exists in Group-Office
-			$folder = new \GO_Base_Fs_Folder(\GO::config()->file_storage_path.'users/'.$uid.$this->_groupoffice_mount);
+			$folder = new \GO\Base\Fs\Folder(\GO::config()->file_storage_path.'users/'.$uid.$this->_groupoffice_mount);
 			$folder->create();
 
 			
@@ -88,11 +88,11 @@ class User extends \OC_User_Backend {
 	/**
 	 * 
 	 * @param string $username
-	 * @return GO_Base_Model_User
+	 * @return GO\Base\Model\User
 	 */
 	private function _getUser($username){
 		if(!isset($this->_user[$username])){
-				$this->_user[$username] = \GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
+				$this->_user[$username] = \GO\Base\Model\User::model()->findSingleByAttribute('username', $username);
 		}
 		
 			
@@ -122,12 +122,12 @@ class User extends \OC_User_Backend {
 	public function getUsers($search = '', $limit = 10, $offset = 0) {
 		$returnArray = array();
 		
-		$fp = \GO_Base_Db_FindParams::newInstance()
+		$fp = \GO\Base\Db\FindParams::newInstance()
 						->limit($limit)
 						->start($offset)
 						->searchQuery($search);
 		
-		$stmt = \GO_Base_Model_User::model()->find($fp);
+		$stmt = \GO\Base\Model\User::model()->find($fp);
 		foreach($stmt as $user){
 			$returnArray[]=$user->username;
 		}
@@ -137,7 +137,7 @@ class User extends \OC_User_Backend {
 	
 	public function getHome($uid) {
 		
-		$home = new \GO_Base_Fs_Folder(\GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
+		$home = new \GO\Base\Fs\Folder(\GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
 		$home->create();	
 		
 		return $home->path();
