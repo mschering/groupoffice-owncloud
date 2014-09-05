@@ -37,10 +37,10 @@ class User extends \OC_User_Backend {
 				'user'=>array(
 					'all'=>array(
 						'/$user/files/Group-Office'=>array(
-							'class'=>"\\OC\\Files\\Storage\\Local",
-							'options'=>array(
-								'datadir'=>\GO::config()->file_storage_path.'users/$user'.$this->_groupoffice_mount
-							),
+							'class' => '\\OC\\Files\\Storage\\Groupoffice',
+                                'options' => array(
+                                    'user' => '$user'
+                                ),
 							'priority'=>150
 						)
 					)
