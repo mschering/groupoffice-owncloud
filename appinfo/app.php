@@ -2,10 +2,10 @@
 require_once OC_App::getAppPath('groupoffice').'/user_groupoffice.php';
 require_once OC_App::getAppPath('groupoffice').'/group_groupoffice.php';
 
-OC_User::registerBackend("GROUPOFFICE");
-OC_User::useBackend("GROUPOFFICE");
+$userBackend = new \OCA\groupoffice\User();
+OC_User::useBackend($userBackend);
 
-$groupBackend  = new OC_GROUP_GROUPOFFICE();
+$groupBackend = new \OCA\groupoffice\Group();
 OC_Group::useBackend($groupBackend);
 
 OC::$CLASSPATH['OC\Files\Storage\Groupoffice'] = 'groupoffice/lib/groupofficestorage.php';

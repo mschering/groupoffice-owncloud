@@ -1,36 +1,37 @@
 <?php
 
-class OC_USER_GROUPOFFICE extends OC_User_Backend
-{
+namespace OCA\groupoffice;
 
-    private $_user = array();
+class User extends \OC_User_Backend {
 
-    public function __construct()
-    {
+    private $_user=array();
+
+    public function __construct() {
 
 
-        $groupoffice_root = rtrim(\OC_Config::getValue("groupoffice_root", "/usr/share/groupoffice"), '/');
+        $groupoffice_root = rtrim(\OC_Config::getValue("groupoffice_root", "/usr/share/groupoffice"),'/');
 
         $groupoffice_config = \OC_Config::getValue("groupoffice_config");
-        if (!empty($groupoffice_config))
+        if(!empty($groupoffice_config))
             define('GO_CONFIG_FILE', $groupoffice_config);
 
-        require_once($groupoffice_root . '/GO.php');
+        require_once($groupoffice_root.'/GO.php');
 
         //create group-office mount.json file
         $datadir = \OC_Config::getValue("datadirectory", \OC::$SERVERROOT . "/data");
-        $mountFile = $datadir . '/mount.json';
+        $mountFile = $datadir.'/mount.json';
 
-        if (!file_exists($mountFile)) {
-            $mountConfig = array(
-                'user' => array(
-                    'all' => array(
-                        '/$user/files/Groupoffice' =>
+        if(!file_exists($mountFile)){
+            $mountConfig =  array(
+                'user'=>array(
+                    'all'=>array(
+                        '/$user/files/Groupoffice'=>
                             array(
                                 'class' => '\OC\Files\Storage\Groupoffice',
                                 'options' => array(
                                     'user' => '$user'
-                                )
+                                ),
+                                'priority' => 150
                             ),
 
                     )
@@ -40,86 +41,97 @@ class OC_USER_GROUPOFFICE extends OC_User_Backend
             file_put_contents($mountFile, json_encode($mountConfig));
         }
     }
-
-    public function deleteUser($uid)
-    {
+    public function deleteUser($uid) {
         // Can't delete user
         return false;
     }
 
-    public function setPassword($uid, $password)
-    {
+    public function setPassword($uid, $password) {
         // We can't change user password
         return false;
     }
 
-    public function checkPassword($uid, $password)
-    {
+    public function checkPassword($uid, $password) {
 
-        $this->_user[$uid] = GO::session()->login($uid, $password, false);
+        $this->_user[$uid] = \GO::session()->login($uid, $password, false);
 
         if (!$this->_user[$uid]) {
             return false;
         } else {
 
             //workaround bug in ownCloud
-            $cache = OC_User::getHome($uid) . '/cache';
-            if (!is_dir($cache))
-                mkdir($cache, 0755, true);
+            $cache = \OC_User::getHome($uid).'/cache';
+            if(!is_dir($cache))
+                mkdir($cache,0755,true);
 
             return $uid;
         }
     }
 
-    private function _getUser($username)
-    {
-        if (!isset($this->_user[$username])) {
-            $this->_user[$username] = GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
+    private function _getUser($username){
+        if(!isset($this->_user[$username])){
+            $this->_user[$username] = \GO_Base_Model_User::model()->findSingleByAttribute('username', $username);
         }
 
 
         return $this->_user[$username];
     }
 
-    public function userExists($uid)
-    {
+    public function userExists($uid) {
         return $this->_getUser($uid) != false;
     }
 
-    public function hasUserListings()
-    {
+    public function hasUserListings() {
         return true;
     }
 
-    public function getUsers($search = '', $limit = 10, $offset = 0)
-    {
+    public function getUsers($search = '', $limit = -1, $offset = 0) {
         $returnArray = array();
 
-        $fp = GO_Base_Db_FindParams::newInstance()
-            ->limit($limit)
+        $fp = \GO_Base_Db_FindParams::newInstance()
             ->start($offset)
-            ->searchQuery($search);
+            ->searchQuery('%'.$search.'%');
 
-        $stmt = GO_Base_Model_User::model()->find($fp);
-        foreach ($stmt as $user) {
-            $returnArray[] = $user->username;
+        if($limit>0)
+            $fp->limit($limit);
+
+        $stmt = \GO_Base_Model_User::model()->find($fp);
+
+        foreach($stmt as $user){
+            $returnArray[]=$user->username;
         }
 
         return $returnArray;
     }
 
-    public function getHome($uid)
-    {
+    public function getHome($uid) {
 
-        $home = new GO_Base_Fs_Folder(GO::config()->file_storage_path . 'owncloud/' . $this->_getUser($uid)->username);
+        $home = new \GO_Base_Fs_Folder(\GO::config()->file_storage_path.'owncloud/'.$this->_getUser($uid)->username);
         $home->create();
 
         return $home->path();
     }
 
-    public function getDisplayName($uid)
-    {
+    public function getDisplayName($uid) {
         return $this->_getUser($uid)->name;
     }
 
+    public function countUsers() {
+        $findParams = \GO_Base_Db_FindParams::newInstance()
+            ->single()
+            ->select('count(*) as total');
+
+        $record = \GO_Base_Model_User::model()->find($findParams);
+
+        return $record->total;
+    }
+
+    public function implementsActions($actions) {
+        return (bool)((OC_USER_BACKEND_CHECK_PASSWORD
+                | OC_USER_BACKEND_GET_HOME
+                | OC_USER_BACKEND_GET_DISPLAYNAME
+                | OC_USER_BACKEND_COUNT_USERS)
+            & $actions);
+    }
 }
+
