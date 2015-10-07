@@ -304,11 +304,11 @@ class Groupoffice extends \OC\Files\Storage\Common
     public function free_space($path)
     {
         if ($path == '' || $path == '/') {
-            return \OC\Files\SPACE_UNKNOWN;
+            return \OCP\Files\FileInfo::SPACE_UNKNOWN;
         } else {
             $space = @disk_free_space($this->groupoffice_data . $this->get_real_path($path));
             if ($space === false) {
-                return \OC\Files\SPACE_UNKNOWN;
+                return \OCP\Files\FileInfo::SPACE_UNKNOWN;
             }
             return $space;
         }
